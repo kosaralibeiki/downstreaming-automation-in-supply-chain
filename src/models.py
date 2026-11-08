@@ -48,12 +48,13 @@ class Warehouse:
         
 
     class Distribution_order:
-        def __init__(self, DO_id: int, item_id: int, warehouse_id: int, quantity: int, typre: str):
+        def __init__(self, DO_id: int, item_id: int, source_warehouse_id: int, destination_warehouse_id: int, quantity: int, type: str):
             self.DO_id = DO_id
             self.item_id = item_id
-            self.warehouse_id = warehouse_id
+            self.source_warehouse_id = source_warehouse_id
+            self.destination_warehouse_id = destination_warehouse_id
             self.quantity = quantity
             self.type = type
 
         def __repr__(self):
-            return f"DistributionOrder(DO_id={self.DO_id}, item_id={self.item_id}, warehouse_id={self.warehouse_id}, quantity={self.quantity}, type={self.type})"
+            return f"DistributionOrder(DO_id={self.DO_id}, item_id={self.item_id}, source_warehouse_id={self.source_warehouse_id}, destination_warehouse_id={self.destination_warehouse_id}, quantity={self.quantity}, type={self.type})"
