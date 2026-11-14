@@ -11,8 +11,8 @@ categories = [
     "Measuring tools"]
 
 
-def generate_items():
-    for i in range(1, 21):
+def generate_items(count=20):
+    for i in range(1, count + 1):
         item = {
             "item_id": f"{i:6d}",
             "item_number": f"1{i:05d}",
@@ -22,8 +22,8 @@ def generate_items():
 
         yield item
 
-def generate_warehouses():
-    for i in range(1, 6):
+def generate_warehouses(count=3):
+    for i in range(1, count + 1):
         warehouse = {
             "warehouse_id": f"{i:03d}",
             "name": f"Warehouse-{i:03d}",
