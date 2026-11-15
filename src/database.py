@@ -119,60 +119,84 @@ def create_tables():
 def insert_generated_data():
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT COUNT(*) FROM items")
-    count = cursor.fetchone()[0]
 
-    if count > 0:
-        print("Data already exists in the tables. Skipping data insertion.")
-        cursor.close()
-        connection.close()
-        return
-
-    items = generate_items()
-    warehouses = generate_warehouses()
+    items = list(generate_items())
+    warehouses = list(generate_warehouses())
     inventory = generate_inventory(items, warehouses)
     forecasts = generate_forecasts(items, warehouses)
     distribution_orders = generate_distribution_orders(items, warehouses)
 
-    for item in items:
-        cursor.execute("""
-        INSERT INTO items (item_id, item_number, description, category)
-        VALUES (%s, %s, %s, %s)""",
-        (item['item_id'], item['item_number'], item['description'], item['category'])
-        )
-    for warehouse in warehouses:
-        cursor.execute("""
-        INSERT INTO warehouses (warehouse_id, name, location)
-        VALUES (%s, %s, %s)""",
-        (warehouse['warehouse_id'], warehouse['name'], warehouse['location'])
-        )
 
-    for inv in inventory:
-        cursor.execute("""
-        INSERT INTO inventory (inventory_id, item_id, warehouse_id, quantity)
-        VALUES (%s, %s, %s, %s)""",
+    cursor.execute("SELECT COUNT(*) FROM items")
+    count = cursor.fetchone()[0]
+    if count > 0:
+        print("Data already exists in the items table. Skipping data insertion.")
+        
+    else:
+        for item in items:
+                cursor.execute("""
+                INSERT INTO items (item_id, item_number, description, category)
+                VALUES (%s, %s, %s, %s)""",
+                (item['item_id'], item['item_number'], item['description'], item['category'])
+                )
+
+
+    cursor.execute("SELECT COUNT(*) FROM warehouses")
+    count = cursor.fetchone()[0]
+    if count > 0:
+        print("Data already exists in the warehouses table. Skipping data insertion.")
+        
+    else:   
+        for warehouse in warehouses:
+            cursor.execute("""
+            INSERT INTO warehouses (warehouse_id, name, location)
+            VALUES (%s, %s, %s)""",
+            (warehouse['warehouse_id'], warehouse['name'], warehouse['location'])
+            )
+
+    cursor.execute("SELECT COUNT(*) FROM inventory")
+    count = cursor.fetchone()[0]
+    if count > 0:
+        print("Data already exists in the inventory table. Skipping data insertion.")
+        
+    else:
+        for inv in inventory:
+            cursor.execute("""
+            INSERT INTO inventory (inventory_id, item_id, warehouse_id, quantity)
+            VALUES (%s, %s, %s, %s)""",
         (inv['inventory_id'], inv['item_id'], inv['warehouse_id'], inv['quantity'])
         )
 
-    for forecast in forecasts:
-        cursor.execute("""
-        INSERT INTO forecasts (forecast_id, item_id, warehouse_id, forecasted_quantity)
-        VALUES (%s, %s, %s, %s)""",
-        (forecast['forecast_id'], forecast['item_id'], forecast['warehouse_id'], forecast['forecasted_quantity'])
-        )
+    cursor.execute("SELECT COUNT(*) FROM forecasts")
+    count = cursor.fetchone()[0]
+    if count > 0:
+        print("Data already exists in the forecasts table. Skipping data insertion.")
+        
+    else:
+        for forecast in forecasts:
+            cursor.execute("""
+            INSERT INTO forecasts (forecast_id, item_id, warehouse_id, forecasted_quantity)
+            VALUES (%s, %s, %s, %s)""",
+            (forecast['forecast_id'], forecast['item_id'], forecast['warehouse_id'], forecast['forecasted_quantity'])
+            )
 
-    for do in distribution_orders:
-        cursor.execute("""
-        INSERT INTO distribution_orders (DO_id, item_id, source_warehouse_id, destination_warehouse_id, quantity, type)
-        VALUES (%s, %s, %s, %s, %s, %s)""",
-        (do['DO_id'], do['item_id'], do['source_warehouse_id'], do['destination_warehouse_id'], do['quantity'], do['type'])
-        )
+    cursor.execute("SELECT COUNT(*) FROM distribution_orders")
+    count = cursor.fetchone()[0]
+    if count > 0:
+        print("Data already exists in the distribution_orders table. Skipping data insertion.")
+        
+    else:
+        for do in distribution_orders:
+            cursor.execute("""
+            INSERT INTO distribution_orders (DO_id, item_id, source_warehouse_id, destination_warehouse_id, quantity, type)
+            VALUES (%s, %s, %s, %s, %s, %s)""",
+            (do['DO_id'], do['item_id'], do['source_warehouse_id'], do['destination_warehouse_id'], do['quantity'], do['type'])
+            )
 
     connection.commit()
-    print("Generated data inserted successfully.")
+
     cursor.close()
     connection.close()
-
 
 
 
