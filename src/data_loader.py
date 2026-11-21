@@ -10,18 +10,6 @@ categories = [
     "Cutting tools",
     "Measuring tools"]
 
-
-def generate_items(count=20):
-    for i in range(1, count + 1):
-        item = {
-            "item_id": i,
-            "item_number": f"1{i:05d}",
-            "description": f"DESC-{i:05d}",
-            "category": random.choice(categories)
-        }
-
-        yield item
-
 def generate_warehouses(count=3):
     for i in range(1, count + 1):
         warehouse = {
@@ -31,6 +19,21 @@ def generate_warehouses(count=3):
         }
 
         yield warehouse
+
+
+def generate_items(count=20):
+    for i in range(1, count + 1):
+        item = {
+            "item_id": i,
+            "item_number": f"1{i:05d}",
+            "description": f"DESC-{i:05d}",
+            "category": random.choice(categories),
+            "main_WH": 1
+        }
+
+        yield item
+
+
 
 def generate_inventory(items, warehouses):
     inventory_id = 1

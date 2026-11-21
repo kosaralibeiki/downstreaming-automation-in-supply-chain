@@ -16,23 +16,7 @@ def get_connection():
 
 def create_tables():
     connection = get_connection()
-    cursor = connection.cursor()
-
-    cursor.execute("SHOW TABLES LIKE 'items'")
-    result = cursor.fetchone()
-
-    if result is not None:
-        print("Item table already exists. Skipping table creation.")
-    else:
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS items (
-            item_id INT PRIMARY KEY,
-            item_number VARCHAR(50),
-            description VARCHAR(255),
-            category VARCHAR(100)
-        )
-        """)
-        print("Items table created successfully.")   
+    cursor = connection.cursor() 
 
 
     cursor.execute("SHOW TABLES LIKE 'warehouses'")
@@ -48,6 +32,24 @@ def create_tables():
         )
         """)
         print("Warehouses table created successfully.")
+
+
+    cursor.execute("SHOW TABLES LIKE 'items'")
+    result = cursor.fetchone()
+
+    if result is not None:
+        print("Item table already exists. Skipping table creation.")
+    else:
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS items (
+            item_id INT PRIMARY KEY,
+            item_number VARCHAR(50),
+            description VARCHAR(255),
+            category VARCHAR(100),
+            main_WH INT
+        )
+        """)
+        print("Items table created successfully.")  
 
 
     cursor.execute("SHOW TABLES LIKE 'inventory'")
@@ -194,7 +196,6 @@ def insert_generated_data():
             )
 
     connection.commit()
-
     cursor.close()
     connection.close()
 

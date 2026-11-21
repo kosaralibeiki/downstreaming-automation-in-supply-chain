@@ -1,14 +1,15 @@
 # data models for the application
 
 class Item:
-    def __init__(self, item_id: int, item_number: str, description: str, category: str):
+    def __init__(self, item_id: int, item_number: str, description: str, category: str, main_WH: int):
         self.item_id = item_id
         self.item_number = item_number
         self.description = description
         self.category = category
+        self.main_WH = main_WH
 
     def __repr__(self):
-        return f"Item(item_id={self.item_id}, item_number={self.item_number}, description={self.description}, category={self.category})"
+        return f"Item(item_id={self.item_id}, item_number={self.item_number}, description={self.description}, category={self.category}, main_WH={self.main_WH})"
 
 
 
