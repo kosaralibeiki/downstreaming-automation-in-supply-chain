@@ -1,7 +1,7 @@
 from multiprocessing.dummy import connection
 
 import mysql.connector
-from data_loader import generate_distribution_orders, generate_items, generate_warehouses, generate_inventory, generate_forecasts
+from data_loader import generate_distribution_orders, generate_items, generate_warehouses, generate_inventory, generate_forecasts, generate_sales
 
 
 def get_connection():
@@ -47,6 +47,8 @@ def create_tables():
             description VARCHAR(255),
             category VARCHAR(100),
             main_WH INT
+
+            FOREIGN KEY (main_WH) REFERENCES warehouses(warehouse_id)
         )
         """)
         print("Items table created successfully.")  
@@ -110,7 +112,29 @@ def create_tables():
         )
         """)
         print("Distribution orders table created successfully.")
+
+
     
+    cursor.execute("SHOW TABLES LIKE 'sales'")
+    result = cursor.fetchone()
+    if result is not None:
+        print("Sales table already exists. Skipping table creation.")
+    else:
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS sales (
+            sale_id INT PRIMARY KEY,
+            item_id INT,
+            source_warehouse_id INT,
+            destination_warehouse_id INT,
+            quantity INT,
+            type VARCHAR(50),
+            
+            FOREIGN KEY (item_id) REFERENCES items(item_id),
+            FOREIGN KEY (source_warehouse_id) REFERENCES warehouses(warehouse_id),
+            FOREIGN KEY (destination_warehouse_id) REFERENCES warehouses(warehouse_id)
+        )
+        """)
+        print("Sales table created successfully.")
 
     connection.commit()
     cursor.close()
@@ -127,6 +151,7 @@ def insert_generated_data():
     inventory = generate_inventory(items, warehouses)
     forecasts = generate_forecasts(items, warehouses)
     distribution_orders = generate_distribution_orders(items, warehouses)
+    sales = generate_sales(items, warehouses)
 
 
     cursor.execute("SELECT COUNT(*) FROM items")
@@ -137,9 +162,9 @@ def insert_generated_data():
     else:
         for item in items:
                 cursor.execute("""
-                INSERT INTO items (item_id, item_number, description, category)
-                VALUES (%s, %s, %s, %s)""",
-                (item['item_id'], item['item_number'], item['description'], item['category'])
+                INSERT INTO items (item_id, item_number, description, category, main_WH)
+                VALUES (%s, %s, %s, %s, %s)""",
+                (item['item_id'], item['item_number'], item['description'], item['category'], item['main_WH'])
                 )
 
 
@@ -193,6 +218,19 @@ def insert_generated_data():
             INSERT INTO distribution_orders (DO_id, item_id, source_warehouse_id, destination_warehouse_id, quantity, type)
             VALUES (%s, %s, %s, %s, %s, %s)""",
             (do['DO_id'], do['item_id'], do['source_warehouse_id'], do['destination_warehouse_id'], do['quantity'], do['type'])
+            )
+
+    cursor.execute("SELECT COUNT(*) FROM sales")
+    count = cursor.fetchone()[0]
+    if count > 0:
+        print("Data already exists in the sales table. Skipping data insertion.")
+        
+    else:
+        for sale in sales:
+            cursor.execute("""
+            INSERT INTO sales (sale_id, item_id, warehouse_id, quantity_sold, sale_date)
+            VALUES (%s, %s, %s, %s, %s)""",
+            (sale['sale_id'], sale['item_id'], sale['warehouse_id'], sale['quantity_sold'], sale['sale_date'])
             )
 
     connection.commit()

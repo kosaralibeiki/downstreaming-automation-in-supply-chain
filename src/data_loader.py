@@ -84,3 +84,19 @@ def generate_distribution_orders(items, warehouses):
 
         yield distribution_order
         do_id += 1
+
+
+def generate_sales(items, warehouses):
+    sale_id = 1
+    for item in items:
+        for warehouse in warehouses:
+            sale = {
+                "sale_id": sale_id,
+                "item_id": item['item_id'],
+                "warehouse_id": warehouse['warehouse_id'],
+                "quantity_sold": random.randint(0, 100),
+                "sale_date": fake.date_this_year()
+            }
+
+            yield sale
+            sale_id += 1

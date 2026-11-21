@@ -59,3 +59,15 @@ class Warehouse:
 
         def __repr__(self):
             return f"DistributionOrder(DO_id={self.DO_id}, item_id={self.item_id}, source_warehouse_id={self.source_warehouse_id}, destination_warehouse_id={self.destination_warehouse_id}, quantity={self.quantity}, type={self.type})"
+
+
+    class Sale:
+        def __init__(self, sale_id: int, item_id: int, warehouse_id: int, quantity_sold: int, sale_date: str):
+            self.sale_id = sale_id
+            self.item_id = item_id
+            self.warehouse_id = warehouse_id
+            self.quantity_sold = quantity_sold
+            self.sale_date = sale_date
+
+        def __repr__(self):
+            return f"Sale(sale_id={self.sale_id}, item_id={self.item_id}, warehouse_id={self.warehouse_id}, quantity_sold={self.quantity_sold}, sale_date={self.sale_date})"
